@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Página administrativa: não deve aparecer em buscadores. -->
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Painel administrativo | Glória em Movimento</title>
+<meta name="theme-color" content="#15181D">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="/icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="/css/styles.css?v=8">
+<link rel="stylesheet" href="/css/tema-v2.css?v=8">
+</head>
+<body class="pagina-admin">
+<a class="skip-link" href="#admin-conteudo">Pular para o conteúdo</a>
+
+<header class="topbar">
+  <div class="container topbar-row">
+    <a href="/" class="brand" aria-label="Voltar ao site">
+      <img class="brand-pin" src="/img/logo-icon.png" width="34" height="34" alt="" aria-hidden="true">
+      <span class="brand-name">Glória<em>painel admin</em></span>
+    </a>
+    <div class="topbar-actions">
+      <a class="btn-link-topo" href="/">Ver o site</a>
+      <span class="admin-usuario" id="adminUsuario" hidden></span>
+      <button type="button" class="btn-sair-topo" id="adminBtnSair" hidden>Sair</button>
+    </div>
+  </div>
+</header>
+
+<main id="admin-conteudo" class="container admin-main">
+
+  <p class="admin-carregando" id="adminCarregando" role="status">Verificando seu acesso…</p>
+
+  <!-- Login -->
+  <section class="admin-cartao admin-login" id="adminLogin" aria-labelledby="tituloLogin" hidden>
+    <p class="etiqueta">Acesso restrito</p>
+    <h1 id="tituloLogin">Entrar no painel</h1>
+    <p>Use a conta de administrador do site. Ela é a mesma conta que você criou pelo botão <strong>Entrar</strong>.</p>
+    <form id="formAdminLogin" class="form-auth">
+      <label for="adminEmail">E-mail</label>
+      <input type="email" id="adminEmail" required autocomplete="username">
+      <label for="adminSenha">Senha</label>
+      <input type="password" id="adminSenha" required autocomplete="current-password" minlength="6">
+      <button type="submit" class="btn-primario">Entrar</button>
+      <p class="form-erro" id="adminErroLogin" role="alert" aria-live="assertive"></p>
+    </form>
+  </section>
+
+  <!-- Conta sem permissão -->
+  <section class="admin-cartao" id="adminSemPermissao" aria-labelledby="tituloSemPermissao" hidden>
+    <p class="etiqueta etiqueta-alerta">Sem permissão</p>
+    <h1 id="tituloSemPermissao">Esta conta não é de administrador</h1>
+    <p>Você está conectado como <strong id="adminSemPermissaoEmail"></strong>, mas essa conta não tem o papel de administrador.</p>
+    <button type="button" class="btn-secundario" id="adminSairSemPermissao">Sair e usar outra conta</button>
+  </section>
+
+  <!-- Painel -->
+  <section id="adminPainel" aria-labelledby="tituloPainel" hidden>
+    <div class="admin-cabecalho">
+      <div>
+        <p class="etiqueta">Administração</p>
+        <h1 id="tituloPainel">Painel administrativo</h1>
+      </div>
+    </div>
+
+    <ul class="admin-stats" aria-label="Resumo">
+      <li class="admin-stat admin-stat-destaque"><strong id="statPendentes">0</strong><span>sugestões pendentes</span></li>
+      <li class="admin-stat"><strong id="statAtivos">0</strong><span>comércios no mapa</span></li>
+      <li class="admin-stat"><strong id="statTotal">0</strong><span>cadastros no total</span></li>
+    </ul>
+
+    <div class="admin-abas" role="tablist" aria-label="Seções do painel">
+      <button type="button" role="tab" class="admin-aba is-ativa" id="btnAbaSolicitacoes" aria-selected="true" aria-controls="painelSolicitacoes" data-aba="solicitacoes">Sugestões dos usuários</button>
+      <button type="button" role="tab" class="admin-aba" id="btnAbaComercios" aria-selected="false" aria-controls="painelComercios" data-aba="comercios">Comércios cadastrados</button>
+    </div>
+
+    <!-- Sugestões -->
+    <section id="painelSolicitacoes" role="tabpanel" aria-labelledby="btnAbaSolicitacoes">
+      <div class="admin-barra">
+        <p>Confira o endereço, pegue as coordenadas no Google Maps e publique. Só o que você aprovar aparece no mapa.</p>
+        <button type="button" class="btn-secundario btn-compacto" id="btnAtualizarSolicitacoes">Atualizar</button>
+      </div>
+      <div id="listaSolicitacoes" class="admin-lista"></div>
+      <p class="admin-vazio" id="semSolicitacoes" hidden>Nenhuma sugestão pendente. Tudo em dia.</p>
+    </section>
+
+    <!-- Comércios -->
+    <section id="painelComercios" role="tabpanel" aria-labelledby="btnAbaComercios" hidden>
+      <details class="admin-novo">
+        <summary>+ Adicionar comércio direto no mapa</summary>
+        <form id="formNovoComercio" class="form-auth admin-form-grid">
+          <div class="campo-largo">
+            <label for="novoNome">Nome</label>
+            <input type="text" id="novoNome" required maxlength="120">
+          </div>
+          <div>
+            <label for="novoCategoria">Categoria</label>
+            <select id="novoCategoria" class="select-categoria" required></select>
+          </div>
+          <div>
+            <label for="novoTelefone">Telefone</label>
+            <input type="text" id="novoTelefone" maxlength="40">
+          </div>
+          <div class="campo-largo">
+            <label for="novoEndereco">Endereço</label>
+            <input type="text" id="novoEndereco" required maxlength="200">
+          </div>
+          <div>
+            <label for="novoHorario">Horário</label>
+            <input type="text" id="novoHorario" maxlength="200">
+          </div>
+          <div>
+            <label for="novoFoto">Foto (link https, opcional)</label>
+            <input type="url" id="novoFoto" placeholder="https://..." maxlength="500">
+          </div>
+          <div>
+            <label for="novoCoordenadas">Coordenadas (lat, lng)</label>
+            <input type="text" id="novoCoordenadas" required placeholder="-30.0731, -51.1995" maxlength="60">
+          </div>
+          <div class="campo-largo">
+            <button type="submit" class="btn-primario">Publicar no mapa</button>
+            <p class="form-erro" id="novoComercioErro" role="alert" aria-live="assertive"></p>
+          </div>
+        </form>
+      </details>
+
+      <div class="admin-barra">
+        <input type="search" id="filtroComercios" class="admin-filtro" placeholder="Filtrar por nome ou endereço…" aria-label="Filtrar comércios">
+      </div>
+      <div id="listaComercios" class="admin-lista"></div>
+    </section>
+  </section>
+</main>
+
+<div id="adminToast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script defer src="/js/supabase-config.js?v=8"></script>
+<script defer src="/js/admin.js?v=8"></script>
+</body>
+</html>

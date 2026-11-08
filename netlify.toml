@@ -1,0 +1,18 @@
+# =============================================================
+# Glória em Movimento — configuração do Netlify
+# Só a pasta "public/" é publicada. README, supabase/, netlify/ e este
+# arquivo ficam FORA do site (acessar /README.md, /supabase/... dá 404).
+# Este projeto não usa build (HTML/CSS/JS puro).
+# =============================================================
+
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+# Página 404 personalizada para qualquer rota que não exista.
+# (As âncoras internas como /#mapa, /#busca continuam funcionando
+# normalmente — isso só vale para caminhos que não são arquivos reais.)
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404
